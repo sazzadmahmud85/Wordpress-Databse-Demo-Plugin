@@ -93,33 +93,52 @@ function dbdemo_admin_page(){
             echo "Email: {$result->email}<br/>";
         }
     }
-
     ?>
-    <form action="" method="POST">
+    <div class="notice notice-error is-dismissible">
+        <p>Some Error Information !!</p>
+    </div>
+    <form action="<?php echo admin_url('admin-post.php'); ?>" method="POST">
         <?php
         wp_nonce_field('dbdemo', 'nonce');
         ?>
+        <input type="hidden" name="action" value="dbdemo_add_record">
         Name: <input type="text" name="name"><br><br>
         Email: <input type="text" name="email"><br>
         <?php submit_button('Add Record'); ?>
     </form>
     <?php
 
-    if(isset($_POST['submit'])){
-        $nonce = sanitize_text_field($_POST['nonce']);
-        if(wp_verify_nonce($nonce, 'dbdemo')){
-            $name = sanitize_text_field($_POST['name']);
-            $email = sanitize_text_field($_POST['email']);
+    /* 
+        if(isset($_POST['submit'])){
+            $nonce = sanitize_text_field($_POST['nonce']);
+            if(wp_verify_nonce($nonce, 'dbdemo')){
+                $name = sanitize_text_field($_POST['name']);
+                $email = sanitize_text_field($_POST['email']);
 
-            $wpdb->insert("{$wpdb->prefix}persons", [
-                'name' => $name, 
-                'email' => $email
-            ]);
-        }else{
-            echo "You are not allowed to do this";
-        }
-    }
+                $wpdb->insert("{$wpdb->prefix}persons", [
+                    'name' => $name, 
+                    'email' => $email
+                ]);
+            }else{
+                echo "You are not allowed to do this";
+            }
+        } 
+    */
 }
+
+add_action('admin_post_dbdemo_add_record', function(){
+    global $wpdb;
+    $nonce = sanitize_text_field($_POST['nonce']);
+    if(wp_verify_nonce($nonce, 'dbdemo')){
+        $name = sanitize_text_field($_POST['name']);
+        $email = sanitize_text_field($_POST['email']);
+        $wpdb->insert("{$wpdb->prefix}persons", [
+            'name' => $name, 
+            'email' => $email
+        ]);
+    }
+    wp_redirect(admin_url('admin.php?page=dbdemo'));
+});
 
 
 
