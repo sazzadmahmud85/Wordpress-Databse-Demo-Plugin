@@ -198,13 +198,3 @@ add_action( 'admin_post_dbdemo_add_record', function () {
 	}
 
 } );
-
-
-
-
-
-
-
-
-
-
